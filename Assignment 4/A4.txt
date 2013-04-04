@@ -1,0 +1,60 @@
+A4 263
+
+
+1)
+
+	Dequeue: 
+
+		If SUFFIX-MAX points to FIRST and FIRST is not LAST, then reassign SUFFIX-MAX to point
+		to the next suffix maximum and set the pointer to the previous element
+		of that new SUFFIX-MAX to null.
+
+		Make temp point to whatever FIRST is pointing to.
+		If the list contains exactly one element make both FIRST AND LAST point to null.
+		Otherwise make FIRST point to FIRST.next. 
+		Return temp.
+
+		if(FIRST != null):
+			if(SUFFIX-MAX == FIRST and FIRST != LAST):
+				SUFFIX-MAX = FIRST.next-suffix-max
+				SUFFIX-MAX.prev-suffix-max = null
+			temp = FIRST
+			if(FIRST == LAST):
+				FIRST = LAST = null
+			else:
+				FIRST = FIRST.next;
+			return temp;
+		else:
+			throw "cannot dequeue from empty list"
+
+
+  	Enqueue: 
+  		If list is empty, have FIRST, LAST and SUFFIX-MAX point to x.
+  		Otherwise:
+	  		Have LAST.next point to x. 
+	  		Have LAST point to x.
+			If SUFFIX-MAX is smaller than x, then set SUFFIX-MAX to x.
+	  		Otherwise traverse the doubly linked list starting from SUFFIX-MAX until 
+	  		we find an element whose next-suffix-max is smaller than x or reach the last suffix maximum. 
+	  		Set that element's next-suffix-max to x, and set x's prev-suffix-max to that element.
+
+	  	new-node = new NODE(x);
+	  	if(FIRST == null):
+	  		FIRST = LAST = SUFFIX-MAX = new-node
+	  	else:
+	  		LAST.next = newNode
+	  		LAST = newNode
+
+	  		if(SUFFIX-MAX.value < x):
+	  			SUFFIX-MAX = newNode
+	  		else:
+	  			LAST-MAX = SUFFIX-MAX
+	  			while(LAST-MAX.next-suffix-max != null && LAST-MAX.next-suffix-max > x):
+	  				LAST-MAX = LAST-MAX.next-suffix-max
+	  			LAST-MAX.next-suffix-max = newNode
+	  			newNode.prev-suffix-max = LAST-MAX
+	  		
+
+
+
+

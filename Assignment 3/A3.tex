@@ -1,0 +1,253 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{titling}
+\usepackage[left=2cm]{geometry}
+\usepackage{tikz}
+\usepackage{arrayjob}
+\usepackage{enumerate}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+
+\author{Michael Kozakov}
+\title{Assignment 3}
+\date{Mar 10, 2013}
+
+\begin{document}
+ 	\maketitle
+	\begin{enumerate}
+		\item %%QUESTION 1
+			\begin{enumerate}[a)]
+				\item %% PART A
+					Since no path compression is used, the FIND operation will not change the rank or height of the tree. We then only need to consider the n - 1 UNIONs.
+					
+					\begin{itemize} %%PROOF FOR PART A
+					
+					\item PREDICATE: Let P(x) = after x UNION operations, rank(q) = height(Q)
+					\item SHOW: P(n-1)
+					\item BASE CASE: Show P(0)
+						\begin{enumerate}[$\circ$]
+							\item Since in the beginning Q is a singleton set, it has only one node q, so $height(Q) = 0$. We're given that for a single node, $rank(q) = 0$. So P(0) holds, since $height(Q) = rank(q)$;
+						\end{enumerate}
+					\item INDUCTION HYPOTHESIS: Assume P(1), P(2), ..., P(n-2)
+					\item INDUCTION STEP: Show P(n-1)
+						\begin{enumerate}[$\circ$]
+							\item Let T1 with root t1 and T2 with root t2 be two trees resulting after n-2 UNION operations.
+							\item Let $h_1$ and $h_2$ be the respective heights of T1 and T2.
+							\item Then (by IH) $rank(t1)$ is $h_1$ and $rank(t2)$ is $h_2$.
+							\item WLOG, assume $h_1 \le h_2$
+							\item We then perform a UNION between T1 and T2 and call the resulting tree Q.
+							\item Case 1: $h_1 < h_2$
+								\begin{itemize}
+									\item We make $t1$ the child of $t2$.
+									\item The height of T2 and rank of t2 remain unchanged.
+									\item The root q of Q is $t2$.
+									\item $height(Q) = height(T2) = rank(t2) = rank(q)$
+									\item Therefore P(n-1) holds.
+								\end{itemize}
+							\item Case 2: $h_1 = h_2$
+								\begin{itemize}
+									\item We make t1 the child of t2. 
+									\item The height of the resulting tree Q is $ h_1 + 1$ (the original height of T1 + the new root node).
+									\item The rank of t2 is incremented, and becomes $h_2 + 1$.
+									\item Since $h_1 = h_2$, $rank(q) = h_2 + 1 = h_1 + 1 = height(Q)$.
+									\item Therefore P(n-1) holds.
+								\end{itemize}
+						\end{enumerate}
+						
+						\item CONCLUSION: After performing n-1 UNION operations using union-by-rank on n distinct elements (each in a singleton set), we end up with a tree Q, such that height(Q) = rank(q).
+
+	
+	Since FIND does not affect the height or rank of the resulting tree, showing P(n-1) is sufficient to prove
+	that for any tree Q formed during the execution of $\sigma$, height(Q) = rank(q)
+					\end{itemize}
+				\item %%PART B
+					As was shown in part a, for any tree Q formed during the execution of $\sigma$, rank(q) = height(Q).
+	To prove that $rank(q) \le \lfloor \log_2 n\rfloor$, we need to prove that for any Q, $height(Q) \le \lfloor \log_2 n\rfloor$.
+	Since no path-compression is used, only the UNION operations can affect the height of Q.
+	
+	\begin{itemize} %%PROOF FOR PART B
+					
+					\item PREDICATE: Let P(x) = for input of x singleton sets, x-1 UNION operations will result in a tree Q, such that $height(Q) = \lfloor \log_2 x \rfloor$
+					\item SHOW: P(n), $n \ge 1$
+					\item BASE CASES: 
+						\begin{enumerate}[$\circ$]
+							\item show P(1)
+								\begin{itemize}
+									\item After $1 - 1 = 0$ UNION operations, the height of Q is 0. 
+									\item Then $height(Q) = 0 \le \lfloor \log_2 1 \rfloor$
+									\item Then P(0) holds.
+								\end{itemize}
+							\item show P(2)
+								\begin{itemize}
+									\item After 2 - 1 = 1 UNION operations, the height of Q is 1.
+									\item Then $height(Q) = 1 \le \lfloor \log_2 2\rfloor$
+									\item Then P(1) holds.
+								\end{itemize}
+						\end{enumerate}
+					\item INDUCTION HYPOTHESIS: Assume P(3), P(4), ..., P(n-1)
+					\item INDUCTION STEP: Show P(n)
+						\begin{enumerate}[$\circ$]
+							\item Let T1 and T2 be two trees formed as a result of n-2 UNIONs. 
+							\item WLOG, assume such that $size(T1) \le size(T2)$
+							\item Let $h_1$ and $h_2$ be the respective heights of T1 and T2.
+							
+							\item Then since $size(T1) < n$ and $size(T2) < n$, by IH 
+							\begin{eqnarray*}
+								h1 & \le & \lfloor \log_2 (size(T1)) \rfloor  \\
+             					h2 & \le & \lfloor \log_2 (size(T2)) \rfloor 
+							\end{eqnarray*}
+
+							\item Since $size(T1) \le size(T2)$ $ h_1 \le h_2$
+							\item Case 1: $h_1 < h_2$
+								\begin{itemize}
+									\item We make t1 the child of t2.
+									\item The height of the resulting tree Q is $h_2$.
+									\item $height(T2) = h_2 \le \lfloor \log_2 (size(T2))\rfloor \le \lfloor \log_2 (size(T2) + size(T1))\rfloor \le \lfloor \log_2 n\rfloor$,
+									\item Therefore P(n) holds.
+								\end{itemize}
+							\item Case 2: $h_1 = h_2$
+								\begin{itemize}
+									\item We make t1 the child of t2.
+									\item The height of the resulting tree Q
+				is $height(Q) = h_1 + 1$ (the original height + the new root node).
+									\item Let s be size(T1)
+									\item Then 
+										\begin{eqnarray*}
+											h1 & \le & \lfloor \log_2 s \rfloor  \\
+             								h1 + 1 & \le & \lfloor \log_2 s \rfloor  + 1  \\
+             								& \le & \lfloor \log_2 s \rfloor  + \lfloor \log_2 2 \rfloor  \\
+             								& \le & \lfloor \log_2 (2s) \rfloor  
+										\end{eqnarray*}
+									\item Since s is the size of the smaller tree, $2s \le size(T1) + size(T2) \le n$.
+									\item Then,
+										\begin{eqnarray*}
+											h_1 + 1 & \le & \lfloor \log_2 n \rfloor  \\
+											height(Q) & \le & \lfloor \log_2 n \rfloor  
+										\end{eqnarray*}
+									\item Therefore P(n) holds
+								\end{itemize}
+						\end{enumerate}
+						
+						\item CONCLUSION: By induction, we show that after performing n-1 UNIONS on n singleton sets, for the resulting tree Q, $height(Q) \le \lfloor \log_2 n \rfloor$
+
+	
+	Since FIND does not affect the height or rank of the resulting tree, showing P(n-1) is sufficient to prove
+	that for any tree Q formed during the execution of $\sigma$, $height(Q) = rank(q)$
+					\end{itemize}
+				\item 
+					\begin{enumerate}[$\circ$]
+						\item The UNION operation performs exactly one comparison between the ranks of the roots of the two trees. Therefore performing n-1 UNIONs costs n-1 comparisons and is $\theta(n)$.
+						\item The FIND x operation goes up the tree Q from node x to the root q. Therefore in the worst case, FIND has to perform exactly height(Q) comparisons.
+						\item In the worst case, m FIND operations are performed after the n - 1 UNION operations,
+		so the cost of performing m FINDs is $\theta(m \log_2 n)$, since we've shown that after
+		n-1 UNIONS the height will be $\le \log_2 n$.
+						\item Therefore the cost of performing $\sigma$ is $\theta(n + m \log_2 n)$. Since $m >= n$,
+						\begin{eqnarray*}
+											n + m \log_2 n & \le & m + m \log_2 n  \\
+											& \le & m \log_2 n + m \log_2 n \\
+											& \le & 2 \times m \log_2 n 
+						\end{eqnarray*}
+						\item Then, the cost of performing $\sigma$ is $\theta(m \log_2 n)$.
+					\end{enumerate}
+		\end{enumerate}
+		\item %% QUESTION 2
+			\begin{enumerate}[a)]
+				\item %% 2a
+					\begin{enumerate}[$\circ$]
+						\item In the worst case, the pivot is the largest (or smallest) element. 
+						\item In a sequence of n elements that means that in the first round we perform
+n-1 comparisons, and then call quicksort on a list of size n-1. 
+						\item Therefore, for a sequence of size 7, the worst case total number of comparisons is
+$$6+5+4+3+2+1 = 21$$
+					\end{enumerate}
+				\item %% 2b
+					\begin{enumerate}[$\circ$]
+						\item In the best case, the pivot is the median value in the sequence. That means that when we perform quicksort on a sequence of size n, we would perform n-1 comparisons,
+and then call quicksort on two sequences of respective sizes $\lfloor \frac{n-1}{2} \rfloor$ and $\lceil \frac{n-1}{2} \rceil$.
+						\item Therefore, for a sequence of size 7, the best case total number of comparisons is
+$$6 + 2 + 2 = 10$$
+					\end{enumerate}
+				\item %% 2c
+					\begin{enumerate}[$\circ$]
+						\item The sorted version of A is [2, 3, 4, 7, 8, 10, 11, 12, 15]. The index $i$ of 4 is 3, the index $j$ of 11 is 7. 
+
+						\item According to the formula shown in CLRS (pg. 183), the probability of comparing two elements located at i and j is $\frac{2}{j-i + 1}$. 
+
+						\item Therefore the probability of comparing 4 and 7 is  $\frac{2}{7 - 3 + 1}$ = 2/5			
+					\end{enumerate}
+				
+				\item %% 2d
+					\begin{enumerate}
+						\item
+							\begin{eqnarray*}
+								E_1 & = & 0 \\
+								E_2 & = & 1 \\
+								E_3 & = & \frac{1}{3} (2 + E_1 + E_1) + \frac{2}{3} (2 + E_2) \\
+								& = &\frac{2}{3} + \frac{2}{3} (2 + 1) = 8/3 \\
+								E_4 & = & \frac{2}{4} (3 + E_1 + E_2) + \frac{2}{4} (3 + E_3) \\
+								& = & \frac{2}{4} (4) + \frac{2}{4} (3 + 8/3) = 29/6 
+							\end{eqnarray*}
+						\item 
+							\begin{eqnarray*}
+								E_5 & = & \frac{1}{5} (4 + E_2 + E_2) + \frac{2}{5} (4 + E_1 + E_3) +\frac{2}{5} (4 + E_4) \\
+		  						& = & \frac{1}{5} (4 + 1 + 1) + \frac{2}{5} (4 + 0 + 8/3) + \frac{2}{5} (4 + 29/6) \\
+		  						& = & 37/5 \\
+		  						E_5 - E_4 & = & \frac{37}{5} - \frac{29}{6} \\
+		  						& = & \frac{77}{30} \\
+							\end{eqnarray*}
+							
+					\end{enumerate}
+			\end{enumerate}
+		\item %% QUESTION 3
+			\begin{itemize}
+				\item ASSUMPTION: We are conducting $R \bowtie S$, where R has attributes A and C, and S has attributes B and C.
+				\item ASSUMPTION: For a specific row, the values in column A, B, and C are  referred to as $a'\,\! $, $b'\,\! $ and $c'\,\! $.
+				\item ASSUMPTION: Since $R \bowtie S$ is the same as $S \bowtie R$, WLOG assume that $size(R) \le size(S)$
+				\item ASSUMPTION: Appending a row to a relation is O(1)
+				\item Let |R| be the size of R.
+				\item Create an empty relation RESULT with attributes A, B and C.
+			\end{itemize}
+			
+			\begin{enumerate}[a)]
+				\item 
+					\begin{itemize}
+						\item Algorithm:
+							\begin{itemize}
+								\item Construct an AVL tree T out of the elements of S in the following way:
+								\begin{itemize}
+									\item The key of each node $C'\,\!$ will be $c'\,\!$, and an attached value will be a linked list
+									\item For each row of S, start performing an AVL INSERT operation with the node with key $c'\,\!$ and and an attached linked list containing a single node $b'\,\!$ . 
+									\item If in the process of the insert you discover a node $C''\,\!$ with the same key ($c'\,\!$), append $b'\,\!$ to the linked list attached to $C''\,\!$, and don't insert $C'\,\!$ into the AVL.
+								\end{itemize}								 
+								\item Now for each of the rows in R perform an AVL FIND operation in T, looking for a node with the key $c'\,\! $. If the node was found, then for each value $b'\,\! $ in the attached linked list, append a row to RESULT containing $a'\,\! $, $b'\,\! $ and $c'\,\! $. 
+							\end{itemize}
+						\item Analysis: 
+							\begin{itemize}
+								\item The worst case for the first part happens when no duplicate value was found throughout the traversal, and a regular AVL INSERT was performed, costing $\theta(\log N)$. Since we are conducting one INSERT for every one of N elements in S, creating an AVL tree will take $\theta(N \log N)$ steps.
+
+								\item Conducting |R| searches is going to cost |R| $\log N$, since each FIND takes $\theta(\log N)$ steps in the worst case.
+
+								\item For every one of the successful matches, we traverse the attached linked list and append a new row to RESULT. Since appending a new row costs $\theta(1)$, and the total number of rows in RESULT is $k$, we say constructing RESULT will take $\theta(k)$
+								\item In total the algorithm takes $\theta(k + N \log N + |R| \log N).$  Since $|R| \le N$, we can say
+that the algorithm takes $\theta(k + 2N) = \theta(k + N) $ steps.
+							\end{itemize}
+					\end{itemize}
+				\item ASSUMPTION: Uniform distribution of elements (SUHA).
+					\begin{itemize}
+						\item Algorithm:
+							\begin{itemize}
+								\item For each of the elements in S, insert the key $c'\,\! $ with the linked list value containing a single value $b'\,\! $ into a hash table. If a value with such a key already exists, simply append $b'\,\! $ to the linked list at that key.
+								\item For each of the elements in R, search for key $c'\,\! $ in the hash table, and if found, for each of the elements in the linked list value, append the row $a'\,\! $, $b'\,\! $, $c'\,\! $ to RESULT.
+							\end{itemize}
+						\item Analysis: 
+							\begin{itemize}
+								\item In the worst case we will be performing N inserts into a hash table takes an \textit{expected} $\theta(N)$ steps.
+								\item Conducting |R| searches takes an \textit{expected} $\theta(|R|)$.
+								\item For every one of the successful matches, we need to append a new row. Assuming that appending to a relation costs $\theta(1)$, conducting $k$ appends costs $\theta(k)$.
+								\item In total the algorithm takes an expected $\theta(k + |R| + N)$. Since $|R| \le N$, we can say
+that the algorithm takes an expected $\theta(k + 2N) = \theta(k + N) $ steps.
+							\end{itemize}
+					\end{itemize}
+			\end{enumerate}
+	\end{enumerate}
+\end{document}

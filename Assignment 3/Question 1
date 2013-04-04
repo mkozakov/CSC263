@@ -1,0 +1,157 @@
+Assignment 3
+
+
+1
+
+	a)
+
+	Since no path compression is used, the FIND operation will not change
+	the rank or height of the tree.
+
+	We then only need to consider the n - 1 UNIONs.
+
+	PREDICATE: Let P(x) = after x UNION operations, rank(q) = height(Q)
+
+	PROVE: P(n-1)
+
+	Proof by induction:
+
+		Base Case - Show P(0):
+
+		Since in the beginning Q is a singleton set, it has only one node q,
+		so height(Q) = 0. We're given that for a single node, rank(q) = 0.
+		So P(0) holds, since height(Q) = rank(q);
+
+		Induction Hypothesis: Assume P(1), P(2), ...., P(n-2)
+
+		Induction Step: Show P(n-1)
+
+			Let T1 be the tree after n-2 unions.
+			Let t1 be the root of T1.
+			Let h_1 be the height of T.
+			Then (by IH) rank(t1) is h_1.
+
+			Let T2 be another tree constructed as a result of 0 <= n <= n-2 UNIONs,
+			then by IH, height(T2) = rank(t2) = h_2.
+
+			We then perform a UNION between T1 and T2 and call the resulting tree Q.
+
+				case 1: h_1 < h_2
+
+					We make t1 the child of t2. The height of T2 and rank of t2
+					remain unchanged. The root of Q (q) is t2.
+					Height(Q) = height(T2) = rank(t2) = rank(q), so P(n-1) holds.
+
+				case 2: h_1 > h_2
+
+					We make t2 the child of t1. The height of T1 and rank of t1
+					remain unchanged. The root of Q (q) is t1.
+					Height(Q) = height(T1) = rank(t1) = rank(q), so P(n-1) holds.
+
+				case 3: h_1 == h_2
+
+					We make t1 the child of t2. The height of the resulting tree Q
+					is h_1 + 1 (the original height of T1 + the new root node).
+					The rank of t2 is incremented, and becomes h_2 + 1.
+					Since h_1 = h_2, rank(q) = h_2 + 1 = h_1 + 1 = height(Q).
+
+					Therefore P(n-1) holds.
+
+			In every case, P(n-1) holds.
+
+		CONCLUSION: After performing n-1 UNION operations using union-by-rank on n
+		distinct elements (each in a singleton set), we end up with a tree Q, such that
+		height(Q) = rank(q).
+
+	Since FIND does not affect the height or rank of the resulting tree, showing P(n-1) is sufficient to prove
+	that for any tree Q formed during the execution of SIGMA, height(Q) = rank(q)
+
+	b)
+
+	As was shown in part a, for any tree Q formed during the execution of SIGMA, rank(q) = height(Q).
+	To prove that rank(q) <= floor(log_2 n), we need to prove that for any Q, height(Q) <= floor(log_2 n).
+	Since no path-compression is used, only the UNION operations can affect the height of Q. 
+
+	Predicate P(x) = after x-1 UNION operations between n initally singleton sets,
+	if Q is the resulting tree, height(Q) = floor(log_2 x)
+
+	PROVE: P(n), n >= 1
+
+	Base Cases
+
+		Show P(1):
+
+		After 1 - 1 = 0 UNION operations, the height of Q is 0. 
+		Then height(Q) = 0 <= floor(log_2 1)
+		Then P(0) holds.
+
+		Show P(2):
+
+		After 2 - 1 = 1 UNION operation, the height of Q is 1.
+		Then height(Q) = 1 <= floor(log_2 2)
+	
+
+	Induction Hypothesis: Assume P(3), P(4), ...., P(n-1)
+
+	Induction Step: Show P(n)
+
+		Let T1 and T2 be two trees formed as a result of n-2 UNIONs, 
+		such that size(T1) <= size(T2) (ie, after performing the n-2 UNIONs,
+		call T1 the smaller tree, and T2 the larger tree). 
+		Let h1 and h2 be the respective heights of T1 and T2.
+		Then since size(T1) < n and size(T2) < n, by IH, 
+
+			h1 <= floor(log_2 size(T1))
+			h2 <= floor(log_2 size(T2))
+
+		Since size(T1) <= size(T2), h1 <= h2.
+
+		We then perform a UNION between T1 and T2 and call the resulting tree Q.
+
+			case 1: h_1 < h_2
+
+				We make t1 the child of t2.
+				The height of the resulting tree Q is h_2.
+				height(T2) = h_2 <= floor(log_2 size(T2)) <= floor(log_2 size(T2) + size(T1)) <= floor(log_2 n),
+				so P(n) holds.
+
+			case 2: h_1 == h_2
+
+				We make t1 the child of t2. The height of the resulting tree Q
+				is h_q = h_1 + 1 (the original height + the new root node).
+				
+				Let s be size(T1). 
+				h1 <= floor(log_2 s)
+				h1 + 1 <= floor(log_2 s) + 1
+				h1 + 1 <= floor(log_2 s) + floor(log_2 2)
+				h1 + 1 <= floor(log_2 2s)
+				
+				Since s is the size of the smaller tree, 2s <= size(T1) + size(T2) <= n.
+				Then,
+
+				h + 1 <= floor(log_2 n)
+				h_q <= floor (log_2 n)
+
+				Then P(n) holds.
+				
+
+			In every case, P(n) holds.
+
+	c) 
+
+		The UNION operation performs exactly one comparison between the 
+		ranks of the roots of the two trees. Therefore performing 
+		n-1 UNIONS costs n-1 comparisons and is THETA(n).
+
+		The FIND(x) in operation goes up the tree Q from node x to the root q. 
+		Therefore in the worst case, FIND has to perform exactly height(Q) comparisons.
+
+		In the worst case, m FIND operations are performed after the n - 1 UNION operations,
+		so the cost of performing m FINDs is THETA(m log_2 n), since we've shown that after
+		n-1 UNIONS the height will be <= log_2 n.
+
+		Therefore the cost of performing SIGMA is THETA(n + m log_2 n). Since
+		m >= n, n + m log_2 n <= m + m log_2 n <= m log_2 n + m log_2 n <= 2 m log_2 n.
+
+		Then, the cost of performing SIGMA is THETA(m log_2 n).
+

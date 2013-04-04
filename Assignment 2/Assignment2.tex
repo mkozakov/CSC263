@@ -1,0 +1,152 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{titling}
+\usepackage[left=2cm]{geometry}
+\usepackage{tikz}
+\usepackage{arrayjob}
+\usepackage{enumerate}
+
+\setlength{\droptitle}{-10em}   % This is your set screw
+
+\author{Michael Kozakov}
+\title{Assignment 2}
+\date{Feb 10, 2013}
+
+\begin{document}
+ 	\maketitle
+	\begin{enumerate}
+		\item %%QUESTION 1
+			\begin{enumerate}[a)]
+				\item %% PART A
+					$$
+				 	\begin{tikzpicture}[level/.style={sibling distance=60mm/#1}]
+						\node [circle,draw,label=0:$-1$] {$15$}
+							child {node [circle,draw,label=0:$+1$] {$4$}
+	    						child {node [circle,draw,label=0:$-1$] {$3$}
+									child {node [circle,draw,label=0:$0$]{$0$}}
+									child[missing]
+	    						}
+	    						child {node [circle,draw,label=0:$+1$] {$8$}
+						            child {node [circle,draw,label=0:$0$] {$7$}}
+						            child {node [circle,draw,label=0:$-1$] {$12$}
+	        							child{node [circle,draw,label=0:$0$] {$11$}}
+	        							child[missing]
+	        						}
+	    						}
+							}
+								child {node [circle,draw,label=0:$+1$] {$22$}
+	    						child{node [circle,draw,label=0:$0$] {$19$}}
+	    						child {node [circle,draw,label=0:$+1$] {$25$}
+	        						child[missing]
+	        						child {node [circle,draw,label=0:$0$] {$29$}}
+	    						}
+						};
+					\end{tikzpicture}
+					$$
+				\item %%PART B
+					$$
+					\begin{tikzpicture}[level/.style={sibling distance=60mm/#1}]
+							\node [circle,draw,label=0:$0$] {$12$}
+							    child {node [circle,draw,label=0:$0$] {$4$}
+							        child {node [circle,draw,label=0:$-1$] {$3$}
+										child {node [circle,draw,label=0:$0$]{$0$}}
+										child[missing]
+							        }
+							        child {node [circle,draw,label=0:$0$] {$8$}
+							            child {node [circle,draw,label=0:$0$] {$7$}}
+							            child {node [circle,draw,label=0:$0$] {$11$}}
+							        }
+							    }
+							    child {node [circle,draw,label=0:$+1$] {$22$}
+							        child{node [circle,draw,label=0:$0$] {$19$}}
+							        child {node [circle,draw,label=0:$+1$] {$25$}
+							            child[missing]
+							            child {node [circle,draw,label=0:$0$] {$29$}}
+							        }
+							    };
+					\end{tikzpicture}
+					$$
+		\end{enumerate}
+		\item %% QUESTION 2
+			\begin{enumerate} 
+				\item Let n be the total number of nodes in T1 and T2
+				\item Conduct an in-order traversal on T1 and T2 ($O(n)$) and save the two sorted lists in $l_1$ and $l_2$
+				\item merge the two sorted lists into one sorted list using the MERGE function of the merge sort $O(n)$
+				\item if the merged list is empty do nothing
+				\item let $k$ be the element at floor(list.length /2)
+				\item otherwise take $k$ and make it the root of an AVL tree. Take every element to the left of $k$, run this algorithm starting with step $d$ on that list, and attach the returned subtree on the left of the root $O(1)$.
+				\item take everything on the right of $k$ and run this algorithm starting with step $d$ on that list, and attach the returned subtree on the right of the root $O(1)$.
+				\item return the root
+				
+				\item Since the tree constructed from the elements on the left of k is ideally hight balanced, and the tree constructed from the elements on the right of k is also ideally height balanced (can be shown by induction), the tree rooted at k is also ideally height balanced.
+	
+			\end{enumerate}
+		\item %% QUESTION 3
+			\begin{enumerate}[a)]
+				\item  
+					For each node we can store the number of nodes in its subtree ($numNodes$), and the sum the values of each node in its subtree($sum$). Then to calculate the average for any subtree we just perform one arithmetic operation, dividing the sum of values by the number of nodes. That takes $\theta (1)$.
+				\item
+
+					INSERT: after inserting an new node we need to go up the tree from the node all the way to the root and for each node on the way ($log n$ nodes) we increment $numNodes$ by one, and change $sum$ to the value + $sum$ of left child + $sum$ of right child. The arithmetic operation ($O(1)$) is performed $log n$ times so the complexity is $O(logn)$
+			
+			
+			 		DELETE: When deleting a node, we need to go up the tree from the node all the way to the root and for each node on the way ($log n$ nodes) we decrease $numNodes$ by one, and change $sum$ to the value + $sum$ of left child + $sum$ of right child. The arithmetic operation ($O(1)$) is performed $log n$ times so the complexity is $O(logn)$
+
+			\end{enumerate}
+	
+		\item %% QUESTION 4
+			\begin{enumerate}
+				\item
+				The key of each node represents the index of an available fragment. With each node we want to store some additional information:  the size of the fragment (fragSize), and the size of the largest available fragment in that subtree (maxSize). Here is an illustration of a block of size 7, with an occupied fragment of size 2 at index 1, and another occupied fragment of size 1 at index 4:
+				
+				\begin{table}[ht]
+					\caption{Memory diagram} % title of Table
+					\centering  % used for centering table
+					\begin{tabular}{c c c c c c c} % centered columns (4 columns)
+					\hline\hline                        %inserts double horizontal lines
+					0 & 1 & 2 & 3 & 4 & 5 & 6\\ [0.5ex] % inserts table 
+					%heading
+					\hline                  % inserts single horizontal line
+					Free & Taken & Taken & Free & Taken & Free & Free  \\ % inserting body of the table
+					\hline %inserts single line
+					\end{tabular}
+					\label{table:nonlin} % is used to refer this table in the text
+				\end{table}
+
+				$$
+				\begin{tikzpicture}[level/.style={sibling distance=30mm/#1}]
+					\node [circle,draw,label=0:1 2] {$3$} {
+						child {node [circle,draw,label=0:1 1] {$0$}}
+					    child {node [circle,draw,label=0: 2 2] {$5$}}   
+				    };
+				\end{tikzpicture}
+				$$
+
+				In the tree we show the three unoccupied fragments at indexes 0, 3 and 5. Each is accompanied by the size of the available fragment at that index, and the size of the largest available fragment in its subtree.
+				\item ALLOCATE(root, blockSize). We are going to be using the First-fit approach. The algorithm is as follows: 
+				\begin{enumerate}
+					\item If maxSize of the root is less than blockSize, return "reject" 
+					\item Otherwise, attempt to allocate on the left child (if there is one). 
+					\item If allocate on the left child returned "reject", check if fragSize at the root is larger than or equal to blockSize. If that's the case, update fragSize to fragSize - blockSize. If the new fragSize is 0, remove that node from the tree by performing the AVL DELETE function.
+					\item If the root fragSize was too small to host blockSize, allocate on the right child.
+					\item After successful allocation, update the maxSize of the root to be the largest of the maxSize of the left child, the maxSize of the right child or the fragSize of the root.
+				
+				
+					ALLOCATE is $O(log n)$ because it essentially performs AVL FIND  ($O(log n)$), AVL DELETE ( $O(log n)$) and some constant work updating the maxSize of the root node.
+				\end{enumerate}
+				\item RELEASE(root, (a,l). 
+				\begin{enumerate}
+					\item Insert a node with the key $a$ into the AVL tree, using the AVL INSERT function. 
+					\item For that node, set fragSize to $l$. Set maxSize to the largest of $l$, maxSize of the right child (if there is one) or maxSize of the left child (if there is one).
+					\item let $toConsolidate$ be the node with the key $a$.
+					\item let $left$ be the rightmost leaf in the left subtree of  $toConsolidate$, $left$.index be its key, $left$.fragSize be its fragSize.
+					\item let $right$ be the leftmost leaf in the right subtree of $toConsolidate$, $right$.index be its key, $right$.fragSize be its fragSize.
+					\item if $left$ exists, and $left$.index + $left$.fragSize == $a$, then set $left$.fragSize and $left$.maxSize to $left$.fragsize + $l$. Go up from $left$ all the way to the root, and update maxSize for every node on the way. Perform AVL DELETE on $toConsolidate$. Assign $left$ to toConsolidate
+					\item if $right$ exists, and $toConsolidate$.index + $toConsolidate$.fragSize == $right$.index, then set $toConsolidate$.fragSize to $toConsolidate$.fragSize + $righ$.fragSize. Go up from $toConsolidate$ all the way to the root, and update maxSize for every node on the way. Perform AVL DELETE on $right$
+				\end{enumerate}
+				
+				RELEASE is $O(logn)$ because it performs AVL INSERT once ($O(logn)$), AVL DELETE ($O(logn)$) and then does constant work of updating the maxSize for at most $logn$ nodes (the height of the tree, $O(logn)$
+				
+			\end{enumerate}
+	\end{enumerate}
+\end{document}

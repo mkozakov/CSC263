@@ -1,0 +1,47 @@
+Question 3
+
+ASSUMPTION: We are conducting R JOIN S, where R has attributes A and C, and S has attributes B and S.
+ASSUMPTION: Since R JOIN S is the same as S JOIN R, lets assume that R is the smaller of the two relations.
+
+Let |R| be the size of R. 
+a)
+
+Create an empty relation RESULT with attributes A, B and C.
+
+Construct an AVL tree T out of the elements of S by performing N AVL insert operations (one for each row). The key of each node should be the value in col C. Additionally, for each node, store the value from the other column in the same row (the value b'). 
+
+Now for each of the rows in R perform an AVL find operation in T, looking for a node with the key c'. If the node was found,
+append a row to RESULT containing a', b' and c'. 
+
+
+Analysis: 
+
+Creating an AVL tree will be THETA(N log N), since we're conducting N inserts, each taking THETA(log N).
+
+Conducting |R| searches is going to cost |R| logN, since each FIND costs theta(log N) in the worst case.
+
+For every one of the k successful matches, we need to append a new row. Assuming that appending to a relation costs O(1), 
+conducting k appends costs theta(k).
+
+In total the algorithm is THETA(k + NlogN + |R|logN) = THETA(k + NlogN).
+
+b) 
+
+ASSUMPTION: Table R does not contain duplicate values in column C. Same goes for table S.
+
+For each of the elements in S, insert a node with the key c' and value b' into a hash table.
+
+For each of the elements in R, search for key c' in the hash table, and if found, append the row a', b', c' to RESULT.
+
+Analisys:
+
+Inserting N elements into a hash table takes an expected THETA(N) steps.
+
+Conducting |R| searches takes an expected theta(|R|) steps
+
+Conducting k append operations on the relation is theta(k) (assuming append is theta(1)).
+
+In total the algorithm takes an expected theta(k + |R| + N) steps. Since |R| < N, we can say
+that the algorithm takes an expected theta(k + N) steps.
+
+
