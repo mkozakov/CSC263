@@ -1,25 +1,21 @@
-A4 263
-
 
 1)
 
 	a)
-
 		Dequeue: 
 
-			If SUFFIX-MAX points to FIRST and FIRST is not LAST, then reassign SUFFIX-MAX to point
-			to the next suffix maximum and set the pointer to the previous element
-			of that new SUFFIX-MAX to null.
+			If SUFFIX-MAX(S) points to whatever FIRST is pointint to then reassign SUFFIX-MAX(S) to point to the next suffix maximum and set prev-suffix-max of that new SUFFIX-MAX(S) (if SUFFIX-MAX(S) is not null) to null.
 
 			Make temp point to whatever FIRST is pointing to.
-			If the list contains exactly one element make both FIRST AND LAST point to null.
+			If the list contains exactly one element make both FIRST and LAST point to null.
 			Otherwise make FIRST point to FIRST.next. 
 			Return temp.
 
 			if(FIRST != null):
-				if(SUFFIX-MAX == FIRST and FIRST != LAST):
-					SUFFIX-MAX = FIRST.next-suffix-max
-					SUFFIX-MAX.prev-suffix-max = null
+				if(SUFFIX-MAX(S) == FIRST):
+					SUFFIX-MAX(S) = FIRST.next-suffix-max
+					if(SUFFIX-MAX(S) != null):
+						SUFFIX-MAX(S).prev-suffix-max = null
 				temp = FIRST
 				if(FIRST == LAST):
 					FIRST = LAST = null
@@ -31,24 +27,26 @@ A4 263
 
 
 	  	Enqueue: 
-	  		If list is empty, have FIRST, LAST and SUFFIX-MAX point to x.
+	  		If list is empty, have FIRST, LAST and SUFFIX-MAX(S) point to x.
 	  		Otherwise:
 		  		Have LAST.next point to x. 
-		  		Have LAST point to x.
-				If SUFFIX-MAX is smaller than x, then set SUFFIX-MAX to x.
-		  		Otherwise traverse the doubly linked list starting from SUFFIX-MAX until 
-		  		we find an element whose next-suffix-max is smaller than x or reach the last suffix maximum. 
-		  		Set that element's next-suffix-max to x, and set x's prev-suffix-max to that element.
+		  		Traverse the doubly linked list backwards starting from LAST until 
+		  		we find a suffix maximum that is larger than x or until we pass SUFFIX-MAX(S).
+		  		If such an element was found, point its next-suffix-max to x, and point
+		  		x.prev-suffix-max to that element.
+		  		Otherwise, have SUFFIX-MAX(S) point to x.
+		  		Point LAST to x.
+
 
 		  	new-node = new NODE(x);
 		  	if(FIRST == null):
-		  		FIRST = LAST = SUFFIX-MAX = new-node
+		  		FIRST = LAST = SUFFIX-MAX(S) = new-node
 		  	else:
 		  		LAST.next = newNode
 		  		LAST = newNode
 
-		  		if(SUFFIX-MAX.value < x):
-		  			SUFFIX-MAX = newNode
+		  		if(SUFFIX-MAX(S).value < x):
+		  			SUFFIX-MAX(S) = newNode
 		  		else:
 		  			LAST-MAX = SUFFIX-MAX
 		  			while(LAST-MAX.next-suffix-max != null && LAST-MAX.next-suffix-max > x):
@@ -58,11 +56,128 @@ A4 263
 
 		Maximum:	
 
-			Return SUFFIX-MAX(S)
+			Return SUFFIX-MAX(S).value
 
-	b)
+	b) 
+
+			LOOP INVARIANT: after each operation, the number of $ in the bank is greater than or equal to the total number of suffix maxima.
+
+			MAXIMUM will always be \theta(1), since it returns the value of whatever SUFFIX-MAX(S) is pointing to. (1 credit)
+
+			DEQUEUE will also cost \theta(1), since it will never traverse more than one node in attempt to fix the SUFFIX-MAX(S) pointer. 
+
+			Therefore, if at any point in the sequence we were to perform either MAXIMUM or DEQUEUE and charge 1$ for the operation, the number of local suffix maxima would only potentially decrese, but the money in the bank would remain the same, so the loop invariant would hold. Therefore in proving the amortized complexity of the sequence, we only need to consider ENQUEUE.
+
+			ENQUEUE:
+
+				Let BEFORE be the number of suffix-maxima in S prior to the call to ENQUEUE and AFTER be the number of suffix-maxima after. 
 
 
+
+			Assume a $2 charge for ENQUEUE: $1 for comparison with larger node or SUFFIX-MAX(S) and 1$ for a future comparison with that node on the way to larger node or SUFFIX-MAX(S). 
+
+			In the worst case, we would have to traverse the entire list and compare the node with each element on the way. That happens when S contains elements in decreasing order, and we ENQUEUE an element x larger than SUFFIX-MAX(S). 
+
+			Then since each elemenent in the doubly linked list has a dollar attached to it, all the comparisons on the way to SUFFIX-MAX(S) are paid for, and after ENQUEUE the doubly linked list contains exaclty one SUFFIX-MAX(S) = x with 1$ attached to it.
+
+
+			EG:
+
+			ENQUEUE(10): (1$ checking for suffix max (null) and one attached)
+
+			     1$              
+		       -----
+		       | 10 |
+		       -----
+		         ^
+
+		    ENQUEUE(9): (1$ on comparison with 10 and one attached)
+
+		         1$   1$           
+		       ---------
+		       | 10 | 9 | 
+		       ---------
+		          ^   ^
+
+
+		    ENQUEUE(8): (1$ on comparison with 9 and one attached)
+
+		         1$   1$  1$        
+		       -------------
+		       | 10 | 9 | 8 |
+		       -------------
+		          ^   ^   ^
+
+		    ENQUEUE(7): (1$ on comparison with 8 and one attached)
+
+		         1$   1$  1$  1$       
+		       -----------------
+		       | 10 | 9 | 8 | 7 |
+		       -----------------
+		          ^   ^   ^   ^
+
+
+		    ENQUEUE(20): 
+
+		    We compare 20 with 7, 8, 9 and 10, using up the attached 1$ on each of them. Now 20 is SUFFIX-MAX(S)
+
+		         0$   0$  0$  0$  1$   
+		       ----------------------
+		       | 10 | 9 | 8 | 7 | 20 |
+		       ----------------------
+		         				  ^
+
+		    The nodes before 20 will never be traversed, since non of them are suffix-maxes.
+
+
+		    The loop invariant is that every suffix max has 1$ attached to it.
+
+
+		    Then by accounting, the amortized complexity is <= 2 = O(1)
+
+
+	c)
+
+		MAXIMUM is \theta(1) since it simply returns the value at SUFFIX-MAX(S).
+		DEQUEUE is \theta(1) since it never has to traverse any more than node.
+
+		The worst case of the m'th operation happens when all the previous m-1 operations were ENQUEUE, resulting in a list containing elements in strictly decreasing order, and where the m'th operation is ENQUEUE(S, x), where x is greater than SUFFIX-MAX(S). 
+
+		In that case, algo conducts a comparison with every one of m-1 nodes in the list. 
+
+		That results in \Theta(m-1) comparisons. 
+
+2) 
+
+	a) See attached image.
+
+	b) 3 cross edges, 2 forward edges, 0 back edges.
+
+	c) Since the graph contains no back edges, it is acyclical by the lemma proved in class. Since it is acyclical, we know that a topological sort can be conducted on the graph to produce a sequential order for the courses and requisites (Theorem 22.12 CLRS 614).
+
+	d) Topological sort produces a list of nodes sorted by finish time in reverse order: 1, 4, 7, 5, 2, 6 
+
+	e) See attached image
+
+
+
+3) 
+	Proof by contradiction.
+
+	Assume that a minimum spanning tree T of G includes the edge e-max. 
+	Then there is no spanning tree of G that weighs less than T.
+
+	Consider the smallest cycle C in G that includes e-max (ie the cycle containing the minimum number of edges). Then in that cycle, we have n edges and n nodes. To build a minimum spanning tree of C we will use n-1 edges - ie. drop one edge, since minimum spanning trees are acyclic.
+
+	In C, consider an arbitrary edge e-arb, such that w(e-arb) < e(max). If the sum of the weights of all edges in the cycle is w(n), then the sum of a spanning tree without e-arb is w(T-arb) = w(n) - w(e-arb) and the sum of a spanning tree without e-max is w(T-max) = w(n) - w(e-max).
+
+	Then the weight of the spanning tree without e-max is smaller than the weight of the spanning tree without e-arb. 
+
+	We can look at the MST T of G as a combination of the MST T1 connecting the nodes in C and the MST T2 connecting the rest of of the nodes. 
+
+	Then w(T1 + T-arb) < w(T1 + T-max).
+
+	Then there exists a spanning tree that weighs less that a minimum spanning tree with edge e-max - contradiction.
 
 
 
